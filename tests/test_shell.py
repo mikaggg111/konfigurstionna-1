@@ -5,7 +5,7 @@ import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from shell import Shell  # noqa: E402
+from shell import Shell
 
 
 class ShellTest(unittest.TestCase):

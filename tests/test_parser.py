@@ -5,7 +5,7 @@ import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from cmd_parser import parse_line  # noqa: E402
+from cmd_parser import parse_line
 
 
 class ParserTest(unittest.TestCase):
