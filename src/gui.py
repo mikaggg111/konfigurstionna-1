@@ -3,11 +3,14 @@ import getpass
 import socket
 import tkinter as tk
 from tkinter import scrolledtext
+from typing import List, Optional, Tuple
 
 from config import Config
 from errors import ShellError
 from script import load_script
 from shell import Result, Shell
+
+Note = Tuple[str, str]
 
 FONT = ("Courier New", 11)
 BG_COLOR = "#1e1e1e"
@@ -22,7 +25,8 @@ SCRIPT_DELAY_MS = 300
 class EmulatorApp:
     """Главное окно эмулятора: область вывода и строка ввода."""
 
-    def __init__(self, root: tk.Tk, shell: Shell, config: Config):
+    def __init__(self, root: tk.Tk, shell: Shell, config: Config,
+                 notes: Optional[List[Note]] = None):
         """Создаёт виджеты, печатает параметры и запускает скрипт."""
         self.root = root
         self.shell = shell
@@ -36,6 +40,8 @@ class EmulatorApp:
         root.title(f"Эмулятор - [{user}@{host}]")
         self._build_widgets()
         self._print_debug()
+        for text, tag in notes or []:
+            self.print_text(text, tag)
         self._start_script()
 
     def _build_widgets(self):
@@ -126,9 +132,9 @@ class EmulatorApp:
         self.entry.focus_set()
 
 
-def run(config: Config):
+def run(config: Config, shell: Shell, notes: Optional[List[Note]] = None):
     """Запускает главный цикл GUI с заданными параметрами."""
     root = tk.Tk()
     root.geometry(WINDOW_SIZE)
-    EmulatorApp(root, Shell(), config)
+    EmulatorApp(root, shell, config, notes)
     root.mainloop()

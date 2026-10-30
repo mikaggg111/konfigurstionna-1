@@ -1,8 +1,9 @@
 """Ядро эмулятора: выполнение команд без привязки к GUI."""
 from dataclasses import dataclass
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Optional
 
 from cmd_parser import parse_line
+from vfs import Vfs
 
 
 @dataclass
@@ -17,12 +18,14 @@ class Result:
 class Shell:
     """Интерпретатор команд эмулятора."""
 
-    def __init__(self):
-        """Регистрирует поддерживаемые команды."""
+    def __init__(self, vfs: Optional[Vfs] = None):
+        """Запоминает VFS и регистрирует поддерживаемые команды."""
+        self.vfs = vfs or Vfs()
         self._commands: Dict[str, Callable[[List[str]], Result]] = {
             "ls": self._cmd_ls,
             "cd": self._cmd_cd,
             "exit": self._cmd_exit,
+            "vfsinfo": self._cmd_vfsinfo,
         }
 
     def execute(self, line: str) -> Result:
@@ -54,3 +57,11 @@ class Shell:
         if args:
             return Result(error="exit: too many arguments")
         return Result(should_exit=True)
+
+    def _cmd_vfsinfo(self, args: List[str]) -> Result:
+        """Служебная команда: имя загруженной VFS и число её элементов."""
+        if args:
+            return Result(error="vfsinfo: too many arguments")
+        dirs, files = self.vfs.count()
+        return Result(output=f"VFS: {self.vfs.name}, папок: {dirs}, "
+                             f"файлов: {files}")
