@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Callable, Dict, List, Optional
 
 from cmd_parser import parse_line
-from commands import cmd_cd, cmd_ls, cmd_tac
+from commands import cmd_cd, cmd_cp, cmd_ls, cmd_tac
 from errors import ShellError
 from uptime import cmd_uptime
 from vfs import Vfs
@@ -39,6 +39,7 @@ class Shell:
             "ls": self._cmd_ls,
             "cd": self._cmd_cd,
             "tac": self._cmd_tac,
+            "cp": self._cmd_cp,
             "clear": self._cmd_clear,
             "uptime": self._cmd_uptime,
             "exit": self._cmd_exit,
@@ -69,6 +70,10 @@ class Shell:
     def _cmd_tac(self, args: List[str]) -> Result:
         """tac файл...: строки файлов в обратном порядке."""
         return Result(output=cmd_tac(self.vfs, args))
+
+    def _cmd_cp(self, args: List[str]) -> Result:
+        """cp [-r] источник... назначение: копирование внутри VFS."""
+        return Result(output=cmd_cp(self.vfs, args))
 
     @staticmethod
     def _cmd_clear(args: List[str]) -> Result:
