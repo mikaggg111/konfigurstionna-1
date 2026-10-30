@@ -37,7 +37,8 @@ class LsTest(CommandCase):
 
     def test_root(self):
         """ls без аргументов: по алфавиту, у папок слэш."""
-        self.assertEqual(self.ok("ls"), "config/  info.txt  projects/  users/  void/")
+        self.assertEqual(
+            self.ok("ls"), "config/  info.txt  projects/  users/  void/")
 
     def test_path(self):
         """ls с путём к папке."""
@@ -51,7 +52,8 @@ class LsTest(CommandCase):
 
     def test_file(self):
         """ls для файла печатает его имя как указано."""
-        self.assertEqual(self.ok("ls /config/welcome.txt"), "/config/welcome.txt")
+        self.assertEqual(
+            self.ok("ls /config/welcome.txt"), "/config/welcome.txt")
 
     def test_empty_dir(self):
         """У пустой папки нет вывода."""
@@ -67,7 +69,8 @@ class LsTest(CommandCase):
 
     def test_multiple_paths(self):
         """Несколько папок: заголовки и пустая строка между ними."""
-        self.assertEqual(self.ok("ls /config /void"), "/config:\nwelcome.txt\n\n/void:")
+        self.assertEqual(self.ok("ls /config /void"),
+                         "/config:\nwelcome.txt\n\n/void:")
 
     def test_missing(self):
         """Нет такого пути."""
@@ -178,7 +181,8 @@ class TacTest(CommandCase):
 
     def test_directory(self):
         """Вместо файла папка."""
-        self.assertEqual(self.error_of("tac /config"), "tac: /config: Is a directory")
+        self.assertEqual(self.error_of("tac /config"),
+                         "tac: /config: Is a directory")
 
     def test_option(self):
         """Неизвестная опция."""

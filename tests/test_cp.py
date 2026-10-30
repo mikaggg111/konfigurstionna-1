@@ -176,7 +176,8 @@ class CpErrorsTest(CpCase):
     def test_target_is_not_directory(self):
         """Несколько источников, а назначение не папка."""
         self.assertEqual(
-            self.error_of("cp /config/welcome.txt /info.txt /users/student/diary.txt"),
+            self.error_of(
+                "cp /config/welcome.txt /info.txt /users/student/diary.txt"),
             "cp: target '/users/student/diary.txt' is not a directory")
 
     def test_copy_into_itself(self):
@@ -188,9 +189,13 @@ class CpErrorsTest(CpCase):
 
     def test_same_file(self):
         """Файл в самого себя."""
-        self.assertEqual(self.error_of("cp /config/welcome.txt /config/welcome.txt"),
-                         "cp: '/config/welcome.txt' and '/config/welcome.txt' are the same file")
-        self.assertIn("same file", self.error_of("cp /config/welcome.txt /config"))
+        text = "cp /config/welcome.txt /config/welcome.txt"
+        self.assertEqual(
+            self.error_of(text),
+            "cp: '/config/welcome.txt' and '/config/welcome.txt' "
+            "are the same file")
+        error = self.error_of("cp /config/welcome.txt /config")
+        self.assertIn("same file", error)
 
     def test_directory_over_file(self):
         """Папкой нельзя заменить файл."""
