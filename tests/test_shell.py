@@ -1,4 +1,4 @@
-"""Тесты ядра эмулятора: заглушки ls, cd, exit и vfsinfo."""
+"""Тесты ядра эмулятора: диспетчер команд, exit, clear, vfsinfo."""
 import unittest
 
 import _path
@@ -12,16 +12,6 @@ class ShellTest(unittest.TestCase):
     def setUp(self):
         """Создаёт новый интерпретатор для каждого теста."""
         self.shell = Shell()
-
-    def test_ls_stub(self):
-        """ls печатает своё имя и аргументы."""
-        result = self.shell.execute("ls -l /tmp")
-        self.assertEqual(result.output, "ls args: ['-l', '/tmp']")
-
-    def test_cd_stub(self):
-        """cd печатает своё имя и аргументы."""
-        result = self.shell.execute("cd /home")
-        self.assertEqual(result.output, "cd args: ['/home']")
 
     def test_unknown_command(self):
         """Неизвестная команда даёт ошибку."""
@@ -44,6 +34,18 @@ class ShellTest(unittest.TestCase):
         self.assertEqual(result.error, "exit: too many arguments")
         self.assertFalse(result.should_exit)
 
+    def test_clear(self):
+        """clear просит окно очистить экран."""
+        result = self.shell.execute("clear")
+        self.assertTrue(result.clear)
+        self.assertEqual((result.output, result.error), ("", ""))
+
+    def test_clear_with_args(self):
+        """clear с аргументами - ошибка."""
+        result = self.shell.execute("clear all")
+        self.assertEqual(result.error, "clear: too many arguments")
+        self.assertFalse(result.clear)
+
     def test_vfsinfo_empty(self):
         """vfsinfo без VFS показывает пустую VFS default."""
         result = self.shell.execute("vfsinfo")
@@ -60,6 +62,12 @@ class ShellTest(unittest.TestCase):
         """vfsinfo с аргументами - ошибка."""
         result = self.shell.execute("vfsinfo x")
         self.assertEqual(result.error, "vfsinfo: too many arguments")
+
+    def test_command_errors_get_command_name(self):
+        """Ошибка команды начинается с её имени, как в UNIX."""
+        result = self.shell.execute("cd /nope")
+        self.assertEqual(
+            result.error, "cd: /nope: No such file or directory")
 
 
 if __name__ == "__main__":

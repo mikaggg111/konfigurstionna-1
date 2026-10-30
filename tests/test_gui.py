@@ -16,6 +16,7 @@ if tk is not None:
     import gui
     from config import Config
     from shell import Shell
+    from vfs import Vfs
 
 WAIT_LIMIT_S = 5
 FAST_DELAY_MS = 1
@@ -45,10 +46,15 @@ class GuiTest(unittest.TestCase):
         except tk.TclError:
             pass
 
-    def open_app(self, notes=None, **params):
+    def open_app(self, notes=None, vfs=None, **params):
         """Создаёт приложение с заданными параметрами запуска."""
-        shell = Shell()
+        shell = Shell(vfs)
         return gui.EmulatorApp(self.root, shell, Config(**params), notes)
+
+    def type_line(self, app, line):
+        """Вводит строку в поле ввода и нажимает Enter."""
+        app.entry.insert(0, line)
+        app._on_enter(None)
 
     def wait_script(self, app):
         """Крутит цикл окна, пока скрипт не закончится."""
@@ -86,13 +92,12 @@ class GuiTest(unittest.TestCase):
 
     def test_script_shows_input_and_output(self):
         """Скрипт показывает и команды, и их вывод."""
-        path = self.script_file("ls -l\ncd /a\n")
+        path = self.script_file("ls -l\nvfsinfo\n")
         app = self.open_app(script_path=path)
         self.wait_script(app)
         text = self.screen(app)
         self.assertIn("$ ls -l", text)
-        self.assertIn("ls args: ['-l']", text)
-        self.assertIn("cd args: ['/a']", text)
+        self.assertIn("VFS: default, папок: 0, файлов: 0", text)
         self.assertIn("Скрипт завершён", text)
 
     def test_script_stops_on_first_error(self):
@@ -115,6 +120,38 @@ class GuiTest(unittest.TestCase):
         app = self.open_app(script_path="no_such_script.txt")
         self.assertIn("не удалось прочитать", self.screen(app))
         self.assertEqual(str(app.entry.cget("state")), tk.NORMAL)
+
+    def test_clear_wipes_the_screen(self):
+        """clear стирает весь текст в окне."""
+        app = self.open_app()
+        self.type_line(app, "vfsinfo")
+        self.assertIn("VFS:", self.screen(app))
+        self.type_line(app, "clear")
+        self.assertEqual(self.screen(app).strip(), "")
+
+    def test_prompt_shows_current_folder(self):
+        """Приглашение содержит текущую папку VFS."""
+        vfs = Vfs()
+        vfs.make_dirs(["etc"])
+        app = self.open_app(vfs=vfs)
+        self.type_line(app, "cd /etc")
+        self.type_line(app, "ls")
+        self.assertIn(":/etc$ ls", self.screen(app))
+
+    def test_error_is_shown_without_closing(self):
+        """Ошибка команды выводится, окно остаётся открытым."""
+        app = self.open_app()
+        self.type_line(app, "cd /nope")
+        self.assertIn("cd: /nope: No such file or directory",
+                      self.screen(app))
+        self.assertTrue(self.root.winfo_exists())
+
+    def test_exit_closes_window(self):
+        """exit закрывает окно."""
+        app = self.open_app()
+        self.type_line(app, "exit")
+        with self.assertRaises(tk.TclError):
+            app.output.get("1.0", tk.END)
 
     def test_input_returns_after_script(self):
         """После скрипта можно вводить команды вручную."""
