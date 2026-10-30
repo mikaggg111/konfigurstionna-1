@@ -1,14 +1,14 @@
-"""Команды эмулятора, которые работают с VFS: ls, cd, tac.
+"""Команды эмулятора, которые работают с VFS: ls, cd, tac, cp.
 
 Каждая команда - функция cmd_имя(vfs, args). Она возвращает текст вывода
 или выбрасывает ShellError. Приставку "имя команды:" к ошибке добавляет
 Shell.
 """
-from typing import List
+from typing import List, Optional
 
 from errors import ShellError
 from options import split_options
-from vfs import CURRENT_DIR, ROOT_NAME, Vfs, VfsNode
+from vfs import CURRENT_DIR, ROOT_NAME, Lookup, Vfs, VfsNode
 
 LS_OPTIONS = "l"
 LONG_FLAG = "l"
@@ -87,3 +87,88 @@ def cmd_tac(vfs: Vfs, args: List[str]) -> str:
             raise ShellError(f"{path}: Is a directory")
         parts.append(reverse_lines(node.content))
     return LINE_BREAK.join(parts)
+
+
+CP_OPTIONS = "r"
+RECURSIVE_FLAG = "r"
+MIN_CP_OPERANDS = 2
+
+
+def contains(ancestor: VfsNode, node: VfsNode) -> bool:
+    """Проверяет, лежит ли node внутри ancestor (или это он сам)."""
+    stack = [ancestor]
+    while stack:
+        current = stack.pop()
+        if current is node:
+            return True
+        stack.extend(current.children.values())
+    return False
+
+
+def check_overwrite(existing: Optional[VfsNode], source: VfsNode, name: str):
+    """Нельзя заменять папку файлом и файл папкой."""
+    if existing is None:
+        return
+    if existing.is_dir and not source.is_dir:
+        raise ShellError(f"cannot overwrite directory '{name}' "
+                         "with non-directory")
+    if source.is_dir and not existing.is_dir:
+        raise ShellError(f"cannot overwrite non-directory '{name}' "
+                         "with directory")
+
+
+def place(parent: VfsNode, name: str, source: VfsNode):
+    """Кладёт копию source в папку parent под именем name (только память).
+
+    Файл заменяет файл. Папка, которая уже есть, не заменяется: в неё
+    переносится содержимое (слияние), как делает cp -r.
+    """
+    existing = parent.children.get(name)
+    check_overwrite(existing, source, name)
+    if existing is not None and existing.is_dir:
+        for child_name, child in source.children.items():
+            place(existing, child_name, child)
+        return
+    parent.children[name] = source.clone(name)
+
+
+def copy_one(vfs: Vfs, source_path: str, dest_path: str, dest: Lookup,
+             recursive: bool):
+    """Копирует один источник; dest - результат vfs.lookup(dest_path)."""
+    source = vfs.find(source_path)
+    if source is vfs.root:
+        raise ShellError("cannot copy the root directory")
+    if source.is_dir and not recursive:
+        raise ShellError(
+            f"-r not specified; omitting directory '{source_path}'")
+    parent, name, node = dest
+    if node is not None and node.is_dir:
+        parent, name = node, source.name
+    if parent.children.get(name) is source:
+        raise ShellError(
+            f"'{source_path}' and '{dest_path}' are the same file")
+    if source.is_dir and contains(source, parent):
+        raise ShellError(f"cannot copy a directory, '{source_path}', "
+                         f"into itself, '{dest_path}'")
+    place(parent, name, source)
+
+
+def cmd_cp(vfs: Vfs, args: List[str]) -> str:
+    """cp [-r] источник... назначение - копирование внутри VFS.
+
+    Изменяется только VFS в памяти, CSV-файл на диске не трогается.
+    """
+    flags, operands = split_options(args, CP_OPTIONS)
+    if not operands:
+        raise ShellError("missing file operand")
+    if len(operands) < MIN_CP_OPERANDS:
+        raise ShellError(
+            f"missing destination file operand after '{operands[0]}'")
+    *sources, dest_path = operands
+    dest = vfs.lookup(dest_path)
+    dest_is_dir = dest[2] is not None and dest[2].is_dir
+    if len(sources) > ONE_ITEM and not dest_is_dir:
+        raise ShellError(f"target '{dest_path}' is not a directory")
+    for source_path in sources:
+        copy_one(vfs, source_path, dest_path, dest, RECURSIVE_FLAG in flags)
+    return ""
