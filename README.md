@@ -6,8 +6,8 @@
 на tkinter (Python 3, без сторонних библиотек). Заголовок окна строится
 из реальных данных ОС: `Эмулятор - [username@hostname]`.
 
-Состояние проекта: этап 4 (основные команды): `ls`, `cd`, `tac`,
-`clear`, `uptime` работают с VFS в памяти.
+Состояние проекта: этап 5: `ls`, `cd`, `tac`, `clear`, `uptime`
+и `cp` работают с VFS в памяти.
 
 Структура репозитория:
 
@@ -30,6 +30,7 @@ Makefile  цели run и test
 | `ls [-l] [путь...]`      | содержимое папок и файлов                   |
 | `cd [путь]`              | сменить текущую папку                       |
 | `tac файл...`            | вывести строки файлов в обратном порядке    |
+| `cp [-r] источник... назначение` | копировать в памяти (диск не меняется) |
 | `clear`                  | очистить экран                              |
 | `uptime [-p или -s]`     | сколько времени работает эмулятор           |
 | `exit`                   | закрыть эмулятор                            |
@@ -39,7 +40,7 @@ Makefile  цели run и test
 Пути бывают абсолютными (`/home/user`) и относительными (`docs`, `..`,
 `.`); `..` выше корня не поднимается. Ошибки выводятся как в UNIX:
 `ls: /nope: No such file or directory`, `cd: too many arguments`,
-`tac: missing file operand`, `invalid option -- 'x'`,
+`tac: missing file operand`, `cp: missing file operand`, `invalid option -- 'x'`,
 `<имя>: command not found`.
 
 - **ls** - содержимое по алфавиту; у папок в конце `/`. Без аргумента -
@@ -133,12 +134,32 @@ path,type,content
 | Скрипт                    | Что проверяет                                 |
 |---------------------------|-----------------------------------------------|
 | `scripts/stage4.txt`      | все режимы ls, cd, tac, uptime, clear         |
+| `scripts/stage5.txt`      | все режимы cp: файлы, `-r`, слияние папок     |
 | `scripts/errors/*.txt`    | ошибки команд: каждая в отдельном скрипте     |
 
 Скрипт останавливается на первой ошибке, поэтому каждая ошибка
 проверяется своим коротким скриптом. Все они запускаются на
 `vfs/deep.csv` через `scripts/test_commands.bat` (Linux:
 `scripts/test_commands.sh`).
+
+### Команда cp
+
+`cp источник назначение`, `cp источник... папка`, `cp -r папка назначение`.
+Копия существует только в памяти: CSV-файл на диске не меняется, после
+перезапуска эмулятора VFS снова такая, как в файле.
+
+- Файл в файл: создаёт копию или заменяет существующий файл.
+- Файл(ы) в существующую папку: имя сохраняется.
+- Папка без `-r`: `cp: -r not specified; omitting directory 'docs'`.
+- `cp -r` в существующую папку кладёт копию внутрь, при повторе папки
+  сливаются (одноимённые файлы заменяются).
+- Ошибки: `missing file operand`, `missing destination file operand
+  after 'x'`, `No such file or directory`, `target 'x' is not a
+  directory`, `cannot copy a directory, 'a', into itself, 'b'`,
+  `'a' and 'b' are the same file`, `cannot overwrite directory 'x'
+  with non-directory`, `invalid option -- 'x'`.
+
+Каждая ошибка проверяется скриптом `scripts/errors/cp_*.txt`.
 
 ## 3. Сборка и тесты
 
@@ -148,7 +169,7 @@ path,type,content
 ```
 run.bat                                  # запуск, Windows
 ./run.sh                                 # запуск, Linux/macOS
-python -m unittest discover -s tests -v  # тесты
+python -m unittest discover -s tests -t . -v  # тесты
 ```
 
 ## 4. Примеры использования
