@@ -50,15 +50,22 @@ class EmulatorApp:
             self.root, font=FONT, bg=BG_COLOR, fg=FG_COLOR,
             state=tk.DISABLED, wrap=tk.WORD,
         )
-        self.output.pack(fill=tk.BOTH, expand=True)
         self.output.tag_config("error", foreground=ERROR_COLOR)
         self.output.tag_config("prompt", foreground=PROMPT_COLOR)
         self.output.tag_config("debug", foreground=DEBUG_COLOR)
-        self.entry = tk.Entry(
-            self.root, font=FONT, bg=BG_COLOR, fg=FG_COLOR,
-            insertbackground=FG_COLOR,
+        bottom = tk.Frame(self.root, bg=BG_COLOR)
+        bottom.pack(side=tk.BOTTOM, fill=tk.X)
+        self.output.pack(fill=tk.BOTH, expand=True)
+        self.prompt_label = tk.Label(
+            bottom, font=FONT, bg=BG_COLOR, fg=PROMPT_COLOR,
         )
-        self.entry.pack(fill=tk.X)
+        self.prompt_label.pack(side=tk.LEFT)
+        self.entry = tk.Entry(
+            bottom, font=FONT, bg=BG_COLOR, fg=FG_COLOR,
+            insertbackground=FG_COLOR, borderwidth=0,
+        )
+        self.entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self._update_prompt()
         self.entry.bind("<Return>", self._on_enter)
         self.entry.focus_set()
 
@@ -72,6 +79,10 @@ class EmulatorApp:
     def _prompt(self) -> str:
         """Приглашение вида "user@host:/текущая/папка$ " (папка из VFS)."""
         return f"{self.login}:{self.shell.vfs.cwd_path()}$ "
+
+    def _update_prompt(self):
+        """Показывает слева от поля ввода, в какой папке мы находимся."""
+        self.prompt_label.configure(text=self._prompt())
 
     def _clear_screen(self):
         """Стирает весь текст в области вывода (команда clear)."""
@@ -94,6 +105,7 @@ class EmulatorApp:
             self.print_text(result.error, "error")
         if result.clear:
             self._clear_screen()
+        self._update_prompt()
         return result
 
     def _on_enter(self, _event):

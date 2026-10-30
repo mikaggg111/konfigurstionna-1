@@ -137,6 +137,17 @@ class GuiTest(unittest.TestCase):
         self.type_line(app, "ls")
         self.assertIn(":/etc$ ls", self.screen(app))
 
+    def test_label_left_of_input_follows_cd(self):
+        """Слева от поля ввода написана текущая папка и меняется с cd."""
+        vfs = Vfs()
+        vfs.make_dirs(["home"])
+        app = self.open_app(vfs=vfs)
+        self.assertTrue(app.prompt_label.cget("text").endswith(":/$ "))
+        self.type_line(app, "cd home")
+        self.assertTrue(app.prompt_label.cget("text").endswith(":/home$ "))
+        self.type_line(app, "cd ..")
+        self.assertTrue(app.prompt_label.cget("text").endswith(":/$ "))
+
     def test_error_is_shown_without_closing(self):
         """Ошибка команды выводится, окно остаётся открытым."""
         app = self.open_app()
