@@ -1,0 +1,3 @@
+# Ошибка: tac без файла.
+# Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\tac_no_operand.txt
+tac

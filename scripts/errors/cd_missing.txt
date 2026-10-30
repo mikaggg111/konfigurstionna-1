@@ -1,0 +1,4 @@
+# Ошибка: cd в несуществующую папку.
+# Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\cd_missing.txt
+cd /etc
+cd /no/such/dir

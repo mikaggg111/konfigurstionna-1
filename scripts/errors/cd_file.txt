@@ -1,0 +1,4 @@
+# Ошибка: cd в файл.
+# Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\cd_file.txt
+cd /etc
+cd /readme.txt

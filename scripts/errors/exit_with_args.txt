@@ -1,0 +1,3 @@
+# Ошибка: exit с аргументом (окно не закрывается).
+# Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\exit_with_args.txt
+exit now

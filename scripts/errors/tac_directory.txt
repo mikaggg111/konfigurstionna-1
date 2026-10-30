@@ -1,0 +1,3 @@
+# Ошибка: tac для папки.
+# Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\tac_directory.txt
+tac /etc

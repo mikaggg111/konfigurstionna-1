@@ -1,0 +1,3 @@
+# Ошибка: uptime с неизвестной опцией.
+# Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\uptime_bad_option.txt
+uptime -z
