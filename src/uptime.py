@@ -9,7 +9,9 @@ SECONDS_PER_MINUTE = 60
 MINUTES_PER_HOUR = 60
 HOURS_PER_DAY = 24
 ONE = 1
-UPTIME_OPTIONS = "ps"
+PRETTY_FLAG = "p"
+SINCE_FLAG = "s"
+UPTIME_OPTIONS = PRETTY_FLAG + SINCE_FLAG
 TIME_FORMAT = "%H:%M:%S"
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 USERS_TEXT = "1 user"
@@ -58,9 +60,9 @@ def cmd_uptime(args: List[str], start: float, now: float) -> str:
         raise ShellError(f"extra operand '{operands[0]}'")
     if flags == set(UPTIME_OPTIONS):
         raise ShellError("options -p and -s cannot be used together")
-    if "s" in flags:
+    if SINCE_FLAG in flags:
         return time.strftime(DATE_FORMAT, time.localtime(start))
-    if "p" in flags:
+    if PRETTY_FLAG in flags:
         return pretty_form(now - start)
     clock = time.strftime(TIME_FORMAT, time.localtime(now))
     return f" {clock} up {short_form(now - start)},  {USERS_TEXT}"
