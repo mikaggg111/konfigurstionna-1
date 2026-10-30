@@ -1,3 +1,3 @@
 # Ошибка: у cd больше одного аргумента.
 # Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\cd_too_many.txt
-cd /etc /home
+cd /config /users

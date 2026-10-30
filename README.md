@@ -37,8 +37,8 @@ Makefile  цели run и test
 | `vfsinfo`                | служебная: имя VFS, число папок и файлов    |
 
 Слева от поля ввода всегда написано приглашение с текущей папкой
-VFS: `user@host:/home/user$`; после `cd` оно меняется, как в Linux.
-Пути бывают абсолютными (`/home/user`) и относительными (`docs`, `..`,
+VFS: `user@host:/users/student$`; после `cd` оно меняется, как в Linux.
+Пути бывают абсолютными (`/users/student`) и относительными (`work`, `..`,
 `.`); `..` выше корня не поднимается. Ошибки выводятся как в UNIX:
 `ls: /nope: No such file or directory`, `cd: too many arguments`,
 `tac: missing file operand`, `cp: missing file operand`, `invalid option -- 'x'`,
@@ -105,9 +105,9 @@ VFS: `user@host:/home/user$`; после `cd` оно меняется, как в
 
 ```
 path,type,content
-/docs,dir,
-/docs/hello.txt,file,SGVsbG8sIHdvcmxkIQ==
-/docs/archive/2025/report.txt,file,0J7RgtGH0ZHRgg==
+/work,dir,
+/work/greeting.txt,file,SGVsbG8sIHdvcmxkIQ==
+/work/old/2024/summary.txt,file,0J7RgtGH0ZHRgg==
 ```
 
 Получить base64: `python -c "import base64;print(base64.b64encode(b'Hello').decode())"`.
@@ -151,7 +151,7 @@ path,type,content
 
 - Файл в файл: создаёт копию или заменяет существующий файл.
 - Файл(ы) в существующую папку: имя сохраняется.
-- Папка без `-r`: `cp: -r not specified; omitting directory 'docs'`.
+- Папка без `-r`: `cp: -r not specified; omitting directory 'work'`.
 - `cp -r` в существующую папку кладёт копию внутрь, при повторе папки
   сливаются (одноимённые файлы заменяются).
 - Ошибки: `missing file operand`, `missing destination file operand
@@ -187,25 +187,25 @@ run.bat --vfs vfs\deep.csv --script scripts\stage4.txt
 
 ```
 user@host:/$ vfsinfo
-VFS: deep.csv, папок: 7, файлов: 6
+VFS: deep.csv, папок: 9, файлов: 7
 user@host:/$ ls
-empty/  etc/  home/  readme.txt
-user@host:/$ cd /home/user
-user@host:/home/user$ ls -l
-d      0 docs
--     78 notes.txt
--     10 photo.bin
-user@host:/home/user$ tac notes.txt
-третья строка
-вторая строка
-первая строка
-user@host:/home/user$ uptime -p
+config/  info.txt  projects/  users/  void/
+user@host:/$ cd /users/student
+user@host:/users/student$ ls -l
+-     29 diary.txt
+-     10 picture.bin
+d      0 work
+user@host:/users/student$ tac diary.txt
+вечер
+день
+утро
+user@host:/users/student$ uptime -p
 up 3 minutes
-user@host:/home/user$ cd /nope
+user@host:/users/student$ cd /nope
 cd: /nope: No such file or directory
-user@host:/home/user$ foo
+user@host:/users/student$ foo
 foo: command not found
-user@host:/home/user$ exit now
+user@host:/users/student$ exit now
 exit: too many arguments
-user@host:/home/user$ exit
+user@host:/users/student$ exit
 ```

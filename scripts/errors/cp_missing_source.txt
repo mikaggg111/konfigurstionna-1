@@ -1,4 +1,4 @@
 # Ошибка: cp несуществующего файла.
 # Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\cp_missing_source.txt
-cp /etc/motd /empty
-cp /no/such/file /empty
+cp /config/welcome.txt /void
+cp /no/such/file /void

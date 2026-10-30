@@ -1,4 +1,4 @@
 # Ошибка: ls несуществующего пути.
 # Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\ls_missing.txt
-ls /etc
+ls /config
 ls /no/such/path

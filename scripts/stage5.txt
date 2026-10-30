@@ -3,29 +3,29 @@
 # Запуск: run.bat --vfs vfs\deep.csv --script scripts\stage5.txt
 # Скрипт останавливается на первой ошибке, остальные - scripts\errors\cp_*.txt
 
-vfsinfo                                 # до копирования
+vfsinfo                                  # до копирования
 
 # --- cp для файлов ---
-cp /etc/motd /home/user/motd.copy       # файл в новый файл
-ls -l /home/user
-cp /etc/motd /empty                     # файл в папку, имя сохраняется
-ls /empty
-cp /readme.txt /empty/info.txt          # файл в файл с другим именем
-cd /home/user
-cp notes.txt notes.bak                  # относительные пути
-cp /etc/motd notes.txt                  # замена существующего файла
-tac notes.txt                           # теперь в нём текст из motd
-cp /readme.txt /etc/motd /empty         # несколько файлов в папку
-ls /empty
+cp /config/welcome.txt /users/student/welcome.copy # файл в новый файл
+ls -l /users/student
+cp /config/welcome.txt /void             # файл в папку, имя сохраняется
+ls /void
+cp /info.txt /void/copy.txt              # файл в файл с другим именем
+cd /users/student
+cp diary.txt diary.bak                   # относительные пути
+cp /config/welcome.txt diary.txt         # замена существующего файла
+tac diary.txt                            # теперь в нём текст из welcome.txt
+cp /info.txt /config/welcome.txt /void   # несколько файлов в папку
+ls /void
 
 # --- cp -r для папок ---
-cp -r docs /backup                      # папка целиком в новое место
-ls /backup/archive/2025
-cp -r docs /empty                       # папка в существующую папку
-ls /empty
-cp -r /home/user/docs /empty            # повтор: папки сливаются
-vfsinfo                                 # стало больше папок и файлов
+cp -r work /backup                       # папка целиком в новое место
+ls /backup/old/2024
+cp -r work /void                         # папка в существующую папку
+ls /void
+cp -r /users/student/work /void          # повтор: папки сливаются
+vfsinfo                                  # стало больше папок и файлов
 
 # --- ошибка: скрипт остановится ---
-cp -r /home /home/user/x                # папку нельзя копировать в себя
-ls                                      # эта строка уже не выполнится
+cp -r /users /users/student/x            # папку нельзя копировать в себя
+ls                                       # эта строка уже не выполнится

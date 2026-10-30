@@ -1,4 +1,4 @@
 # Ошибка: неизвестная команда.
 # Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\unknown_command.txt
-ls /etc
+ls /config
 foo bar

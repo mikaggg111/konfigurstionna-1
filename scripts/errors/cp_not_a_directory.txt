@@ -1,3 +1,3 @@
 # Ошибка: несколько источников, назначение - файл.
 # Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\cp_not_a_directory.txt
-cp /etc/motd /readme.txt /home/user/notes.txt
+cp /config/welcome.txt /info.txt /users/student/diary.txt

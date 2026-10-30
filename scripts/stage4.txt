@@ -3,42 +3,42 @@
 # Запуск: run.bat --vfs vfs\deep.csv --script scripts\stage4.txt
 # Остальные ошибки проверяются по одной: scripts\errors\*.txt
 
-vfsinfo                         # какая VFS загружена
+vfsinfo                                  # какая VFS загружена
 
 # --- ls: все режимы ---
-ls                              # корень, у папок в конце слэш
-ls -l                           # подробно: тип, размер, имя
-ls /home/user                   # путь к папке
-ls /home/user/notes.txt         # путь к файлу
-ls /etc /empty                  # несколько папок сразу
-ls -l /home/user/docs/archive/2025
+ls                                       # корень, у папок в конце слэш
+ls -l                                    # подробно: тип, размер, имя
+ls /users/student                        # путь к папке
+ls /users/student/diary.txt              # путь к файлу
+ls /config /void                         # несколько папок сразу
+ls -l /users/student/work/old/2024
 
 # --- cd: все режимы ---
-cd /home/user/docs              # абсолютный путь (в приглашении папка)
+cd /users/student/work                   # абсолютный путь (в приглашении папка)
 ls
-cd archive/2025                 # относительный путь
+cd old/2024                              # относительный путь
 ls
-cd ../..                        # два шага вверх
-cd .                            # текущая папка
-cd /                            # в корень
-cd home                         # относительно текущей папки
-cd user                         # ещё глубже
-cd ..                           # на шаг вверх
-cd                              # без аргументов - в корень
+cd ../..                                 # два шага вверх
+cd .                                     # текущая папка
+cd /                                     # в корень
+cd users                                 # относительно текущей папки
+cd student                               # ещё глубже
+cd ..                                    # на шаг вверх
+cd                                       # без аргументов - в корень
 
 # --- tac: все режимы ---
-tac /home/user/notes.txt        # строки в обратном порядке
-cd /home/user
-tac notes.txt docs/todo.txt     # несколько файлов, относительные пути
-tac /etc/motd
+tac /users/student/diary.txt             # строки в обратном порядке
+cd /users/student
+tac diary.txt work/tasks.txt             # несколько файлов, относительные пути
+tac /config/welcome.txt
 
 # --- uptime: все режимы ---
-uptime                          # время, сколько работает эмулятор
-uptime -p                       # то же словами
-uptime -s                       # когда эмулятор запущен
+uptime                                   # время, сколько работает эмулятор
+uptime -p                                # то же словами
+uptime -s                                # когда эмулятор запущен
 
 # --- clear: очищает экран, скрипт продолжается ---
 clear
-ls                              # после clear на экране только эта команда
-tac /no/such/file.txt           # ошибка: скрипт остановится
-ls                              # эта строка уже не выполнится
+ls                                       # после clear на экране только эта команда
+tac /no/such/file.txt                    # ошибка: скрипт остановится
+ls                                       # эта строка уже не выполнится

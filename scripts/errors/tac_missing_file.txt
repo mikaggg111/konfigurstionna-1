@@ -1,4 +1,4 @@
 # Ошибка: tac несуществующего файла.
 # Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\tac_missing_file.txt
-tac /etc/motd
-tac /etc/nothing.txt
+tac /config/welcome.txt
+tac /config/nothing.txt
