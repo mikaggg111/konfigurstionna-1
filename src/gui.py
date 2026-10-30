@@ -36,7 +36,7 @@ class EmulatorApp:
         self.script_running = False
         user = getpass.getuser()
         host = socket.gethostname()
-        self.prompt = f"{user}@{host}:~$ "
+        self.login = f"{user}@{host}"
         root.title(f"Эмулятор - [{user}@{host}]")
         self._build_widgets()
         self._print_debug()
@@ -69,6 +69,16 @@ class EmulatorApp:
         self.output.configure(state=tk.DISABLED)
         self.output.see(tk.END)
 
+    def _prompt(self) -> str:
+        """Приглашение вида "user@host:/текущая/папка$ " (папка из VFS)."""
+        return f"{self.login}:{self.shell.vfs.cwd_path()}$ "
+
+    def _clear_screen(self):
+        """Стирает весь текст в области вывода (команда clear)."""
+        self.output.configure(state=tk.NORMAL)
+        self.output.delete("1.0", tk.END)
+        self.output.configure(state=tk.DISABLED)
+
     def _print_debug(self):
         """Печатает все заданные параметры запуска (отладочный вывод)."""
         for line in self.config.debug_lines():
@@ -76,12 +86,14 @@ class EmulatorApp:
 
     def _execute_line(self, line: str) -> Result:
         """Показывает команду, выполняет её и показывает результат."""
-        self.print_text(self.prompt + line, "prompt")
+        self.print_text(self._prompt() + line, "prompt")
         result = self.shell.execute(line)
         if result.output:
             self.print_text(result.output)
         if result.error:
             self.print_text(result.error, "error")
+        if result.clear:
+            self._clear_screen()
         return result
 
     def _on_enter(self, _event):
