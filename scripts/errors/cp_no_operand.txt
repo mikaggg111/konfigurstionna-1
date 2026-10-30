@@ -1,0 +1,3 @@
+# Ошибка: cp без аргументов.
+# Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\cp_no_operand.txt
+cp

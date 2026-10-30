@@ -1,0 +1,3 @@
+# Ошибка: папка в саму себя.
+# Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\cp_into_itself.txt
+cp -r /home /home/user/x

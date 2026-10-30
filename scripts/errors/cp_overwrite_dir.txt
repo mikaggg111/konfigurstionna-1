@@ -1,0 +1,3 @@
+# Ошибка: заменить файл папкой.
+# Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\cp_overwrite_dir.txt
+cp -r /etc /readme.txt

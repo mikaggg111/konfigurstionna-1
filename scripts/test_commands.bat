@@ -6,7 +6,10 @@ cd /d "%~dp0.."
 echo 1. Stage 4 startup script: ls, cd, tac, clear, uptime
 python src\main.py --vfs vfs\deep.csv --script scripts\stage4.txt
 
-echo 2. Command errors: one script per error
+echo 2. Stage 5 startup script: cp (VFS changes only in memory)
+python src\main.py --vfs vfs\deep.csv --script scripts\stage5.txt
+
+echo 3. Command errors: one script per error
 for %%f in (scripts\errors\*.txt) do (
     echo    %%f
     python src\main.py --vfs vfs\deep.csv --script %%f

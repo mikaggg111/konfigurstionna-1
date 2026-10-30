@@ -1,0 +1,3 @@
+# Ошибка: папка без опции -r.
+# Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\cp_dir_without_r.txt
+cp /etc /empty

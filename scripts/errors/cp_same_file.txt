@@ -1,0 +1,3 @@
+# Ошибка: файл в самого себя.
+# Запуск: run.bat --vfs vfs\deep.csv --script scripts\errors\cp_same_file.txt
+cp /etc/motd /etc/motd
