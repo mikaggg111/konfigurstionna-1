@@ -72,7 +72,7 @@ class StartupScriptsTest(unittest.TestCase):
         before = shell.vfs.count()
         results, failed = run_script(
             shell, path_of("scripts", "stage5.txt"))
-        self.assertEqual(failed, "cp -r /home /home/user/x")
+        self.assertEqual(failed, "cp -r /users /users/student/x")
         self.assertEqual([r.error for r in results[:-1]],
                          [""] * (len(results) - 1))
         self.assertNotEqual(shell.vfs.count(), before)

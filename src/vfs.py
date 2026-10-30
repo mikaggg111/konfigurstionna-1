@@ -2,7 +2,7 @@
 
 Источник VFS - CSV-файл со столбцами path, type, content:
 
-* path    - полный путь от корня, например /home/user/notes.txt;
+* path    - полный путь от корня, например /users/student/diary.txt;
 * type    - dir (папка) или file (файл);
 * content - содержимое файла в base64 (у папки пусто).
 
@@ -60,7 +60,7 @@ class Vfs:
         self.cwd: List[str] = []
 
     def cwd_path(self) -> str:
-        """Возвращает путь текущей папки, например /home/user."""
+        """Возвращает путь текущей папки, например /users/student."""
         return SEPARATOR + SEPARATOR.join(self.cwd)
 
     def split_path(self, path: str) -> List[str]:

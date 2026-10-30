@@ -44,8 +44,8 @@ class LoadTest(LoadCase):
 
     def test_single_file(self):
         """Файл читается из base64 в байты."""
-        vfs = self.load(f"/hello.txt,file,{HELLO_B64}\n")
-        self.assertEqual(vfs.find("/hello.txt").content, b"Hello")
+        vfs = self.load(f"/greeting.txt,file,{HELLO_B64}\n")
+        self.assertEqual(vfs.find("/greeting.txt").content, b"Hello")
         self.assertEqual(vfs.count(), (0, 1))
 
     def test_nested_levels(self):
@@ -57,14 +57,14 @@ class LoadTest(LoadCase):
 
     def test_empty_dir_row(self):
         """Строка типа dir создаёт пустую папку."""
-        vfs = self.load("/empty,dir,\n")
-        self.assertTrue(vfs.find("/empty").is_dir)
-        self.assertEqual(vfs.find("/empty").children, {})
+        vfs = self.load("/void,dir,\n")
+        self.assertTrue(vfs.find("/void").is_dir)
+        self.assertEqual(vfs.find("/void").children, {})
 
     def test_binary_data(self):
         """Двоичные данные сохраняются через base64 без потерь."""
         vfs = load_vfs(sample("deep.csv"))
-        data = vfs.find("/home/user/photo.bin").content
+        data = vfs.find("/users/student/picture.bin").content
         self.assertEqual(data, b"\x89BIN\r\n\x00\x01\x02\xff")
 
     def test_name_is_file_name(self):
@@ -73,20 +73,20 @@ class LoadTest(LoadCase):
 
     def test_bom_crlf_and_spaces(self):
         """BOM, переводы строк CRLF и пробелы в заголовке допустимы."""
-        text = "﻿path , Type,content\r\n/a.txt,FILE," + HELLO_B64 + "\r\n"
+        text = "﻿path , Type,content\r\n/first.txt,FILE," + HELLO_B64 + "\r\n"
         vfs = load_vfs(self.csv_file(text, "utf-8"))
-        self.assertEqual(vfs.find("/a.txt").content, b"Hello")
+        self.assertEqual(vfs.find("/first.txt").content, b"Hello")
 
     def test_samples_load(self):
         """Все примеры из папки vfs загружаются."""
         self.assertEqual(load_vfs(sample("minimal.csv")).count(), (0, 1))
-        self.assertEqual(load_vfs(sample("several.csv")).count(), (1, 4))
-        self.assertEqual(load_vfs(sample("deep.csv")).count(), (7, 6))
+        self.assertEqual(load_vfs(sample("several.csv")).count(), (1, 5))
+        self.assertEqual(load_vfs(sample("deep.csv")).count(), (9, 7))
 
     def test_deep_sample_has_three_levels(self):
         """В deep.csv есть путь глубиной не менее трёх уровней."""
         vfs = load_vfs(sample("deep.csv"))
-        node = vfs.find("/home/user/docs/archive/2025/report.txt")
+        node = vfs.find("/users/student/work/old/2024/summary.txt")
         self.assertFalse(node.is_dir)
 
     def test_disk_file_is_not_modified(self):
@@ -139,7 +139,7 @@ class LoadErrorTest(LoadCase):
 
     def test_bad_base64(self):
         """Содержимое не в base64."""
-        self.assert_broken("/a.txt,file,!!!\n", "base64")
+        self.assert_broken("/first.txt,file,!!!\n", "base64")
 
     def test_relative_path(self):
         """Путь без ведущего /."""
@@ -147,11 +147,11 @@ class LoadErrorTest(LoadCase):
 
     def test_dots_in_path(self):
         """Точки в пути запрещены."""
-        self.assert_broken("/a/../b.txt,file,\n", "'.' и '..'")
+        self.assert_broken("/a/../second.txt,file,\n", "'.' и '..'")
 
     def test_duplicate_file(self):
         """Один путь дважды."""
-        self.assert_broken("/a.txt,file,\n/a.txt,file,\n", "уже есть")
+        self.assert_broken("/first.txt,file,\n/first.txt,file,\n", "уже есть")
 
     def test_file_used_as_folder(self):
         """Файл не может быть папкой для другого элемента."""
@@ -163,7 +163,7 @@ class LoadErrorTest(LoadCase):
 
     def test_short_row(self):
         """В строке не хватает полей: тип не задан."""
-        self.assert_broken("/a.txt\n", "неизвестный тип")
+        self.assert_broken("/first.txt\n", "неизвестный тип")
 
 
 class PathTest(unittest.TestCase):
