@@ -6,4 +6,4 @@ run:
 	$(PYTHON) src/main.py
 
 test:
-	$(PYTHON) -m unittest discover -s tests -v
+	$(PYTHON) -m unittest discover -s tests -t . -v

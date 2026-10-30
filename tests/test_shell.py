@@ -1,7 +1,6 @@
 """Тесты ядра эмулятора: диспетчер команд, exit, clear, vfsinfo."""
 import unittest
 
-import _path
 from shell import Shell
 from vfs import Vfs
 

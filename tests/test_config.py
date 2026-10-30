@@ -3,7 +3,6 @@ import contextlib
 import io
 import unittest
 
-import _path
 from config import Config, parse_args
 
 

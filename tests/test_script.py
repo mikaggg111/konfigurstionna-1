@@ -3,7 +3,6 @@ import os
 import tempfile
 import unittest
 
-import _path
 from errors import ShellError
 from script import load_script
 

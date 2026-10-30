@@ -5,7 +5,6 @@ import time
 import unittest
 from unittest import mock
 
-import _path
 
 try:
     import tkinter as tk

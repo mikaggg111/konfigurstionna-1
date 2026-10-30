@@ -2,7 +2,6 @@
 import time
 import unittest
 
-import _path
 from shell import Shell
 from uptime import DATE_FORMAT, pretty_form, short_form
 

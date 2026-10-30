@@ -3,7 +3,6 @@ import glob
 import os
 import unittest
 
-import _path
 from script import load_script
 from shell import Shell
 from vfs import load_vfs
@@ -66,6 +65,17 @@ class StartupScriptsTest(unittest.TestCase):
         self.assertTrue(any(result.clear for result in results))
         self.assertEqual([r.error for r in results[:-1]],
                          [""] * (len(results) - 1))
+
+    def test_stage5(self):
+        """Скрипт этапа 5 копирует файлы и папки, ошибка - в конце."""
+        shell = shell_for("deep.csv")
+        before = shell.vfs.count()
+        results, failed = run_script(
+            shell, path_of("scripts", "stage5.txt"))
+        self.assertEqual(failed, "cp -r /home /home/user/x")
+        self.assertEqual([r.error for r in results[:-1]],
+                         [""] * (len(results) - 1))
+        self.assertNotEqual(shell.vfs.count(), before)
 
     def test_each_error_script_fails_on_its_last_command(self):
         """Скрипты из scripts/errors ошибаются только на последней строке."""

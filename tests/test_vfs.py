@@ -4,7 +4,6 @@ import os
 import tempfile
 import unittest
 
-import _path
 from errors import ShellError
 from vfs import Vfs, VfsNode, load_vfs
 
@@ -33,7 +32,7 @@ class LoadCase(unittest.TestCase):
         """Загружает VFS из строк CSV (заголовок добавляется сам)."""
         return load_vfs(self.csv_file(HEADER + rows))
 
-    def assertBroken(self, rows, fragment):
+    def assert_broken(self, rows, fragment):
         """Проверяет, что CSV не загружается, а в ошибке есть fragment."""
         with self.assertRaises(ShellError) as context:
             self.load(rows)
@@ -136,35 +135,35 @@ class LoadErrorTest(LoadCase):
 
     def test_unknown_type_has_line_number(self):
         """Ошибка в строке данных сообщает её номер."""
-        self.assertBroken("/a,dir,\n/b,folder,\n", "строка 3")
+        self.assert_broken("/a,dir,\n/b,folder,\n", "строка 3")
 
     def test_bad_base64(self):
         """Содержимое не в base64."""
-        self.assertBroken("/a.txt,file,!!!\n", "base64")
+        self.assert_broken("/a.txt,file,!!!\n", "base64")
 
     def test_relative_path(self):
         """Путь без ведущего /."""
-        self.assertBroken("a.txt,file,\n", "должен начинаться")
+        self.assert_broken("a.txt,file,\n", "должен начинаться")
 
     def test_dots_in_path(self):
         """Точки в пути запрещены."""
-        self.assertBroken("/a/../b.txt,file,\n", "'.' и '..'")
+        self.assert_broken("/a/../b.txt,file,\n", "'.' и '..'")
 
     def test_duplicate_file(self):
         """Один путь дважды."""
-        self.assertBroken("/a.txt,file,\n/a.txt,file,\n", "уже есть")
+        self.assert_broken("/a.txt,file,\n/a.txt,file,\n", "уже есть")
 
     def test_file_used_as_folder(self):
         """Файл не может быть папкой для другого элемента."""
-        self.assertBroken("/a,file,\n/a/b,file,\n", "файл, а не папка")
+        self.assert_broken("/a,file,\n/a/b,file,\n", "файл, а не папка")
 
     def test_root_as_file(self):
         """У файла должно быть имя."""
-        self.assertBroken("/,file,\n", "должно быть имя")
+        self.assert_broken("/,file,\n", "должно быть имя")
 
     def test_short_row(self):
         """В строке не хватает полей: тип не задан."""
-        self.assertBroken("/a.txt\n", "неизвестный тип")
+        self.assert_broken("/a.txt\n", "неизвестный тип")
 
 
 class PathTest(unittest.TestCase):

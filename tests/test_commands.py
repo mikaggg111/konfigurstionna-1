@@ -2,7 +2,6 @@
 import os
 import unittest
 
-import _path
 from shell import Shell
 from vfs import load_vfs
 
