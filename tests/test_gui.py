@@ -45,9 +45,10 @@ class GuiTest(unittest.TestCase):
         except tk.TclError:
             pass
 
-    def open_app(self, **params):
+    def open_app(self, notes=None, **params):
         """Создаёт приложение с заданными параметрами запуска."""
-        return gui.EmulatorApp(self.root, Shell(), Config(**params))
+        shell = Shell()
+        return gui.EmulatorApp(self.root, shell, Config(**params), notes)
 
     def wait_script(self, app):
         """Крутит цикл окна, пока скрипт не закончится."""
@@ -103,6 +104,11 @@ class GuiTest(unittest.TestCase):
         self.assertIn("foo: command not found", text)
         self.assertIn("ошибка в строке 2", text)
         self.assertNotIn("/never", text)
+
+    def test_notes_are_shown(self):
+        """Сообщения о загрузке VFS видны в окне."""
+        app = self.open_app(notes=[("VFS загружена", "debug")])
+        self.assertIn("VFS загружена", self.screen(app))
 
     def test_missing_script(self):
         """Нет файла скрипта - сообщение об ошибке, ввод доступен."""
