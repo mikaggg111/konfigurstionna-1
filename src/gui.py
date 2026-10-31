@@ -1,4 +1,5 @@
 """Графический интерфейс эмулятора на tkinter."""
+"""Берет текст из поля и режет его после нажатия Enter"""
 import getpass
 import socket
 import tkinter as tk

@@ -1,4 +1,5 @@
 """Команда uptime: сколько времени работает эмулятор."""
+"""выполняет её над деревом из vfs.py"""
 import time
 from typing import List, Tuple
 

@@ -1,4 +1,4 @@
-"""Простой парсер ввода: делит строку на команду и аргументы."""
+"""Простой парсер ввода: режет строку на команду и аргументы."""
 from dataclasses import dataclass, field
 from typing import List, Optional
 

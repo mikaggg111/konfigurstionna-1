@@ -1,4 +1,5 @@
 """Ядро эмулятора: выполнение команд без привязки к GUI."""
+"""Ищет команду ls в своём словаре и вызывает нужную функцию"""
 import time
 from dataclasses import dataclass
 from typing import Callable, Dict, List, Optional
